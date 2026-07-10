@@ -91,24 +91,40 @@
   .wrap { width: 100%; max-width: 1120px; display: flex; flex-direction: column; gap: clamp(20px, 3vw, 34px); }
 
   /* — masztowa belka — */
-  .masthead {
-    display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding-bottom: 18px; border-bottom: 1px solid var(--line);
-  }
-  .brand { display: flex; align-items: center; gap: 14px; }
-  .hammer { width: 30px; height: 30px; flex: none; color: var(--brass); }
-  .brand-txt { display: flex; flex-direction: column; gap: 2px; }
-  .wordmark {
-    font-family: var(--serif); font-size: clamp(1rem, 1.4vw, 1.18rem);
-    font-weight: 700; letter-spacing: .26em; text-transform: uppercase; color: var(--ink);
-  }
-  .tagline { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; color: var(--ink-dim); text-transform: uppercase; }
+  .masthead { display: flex; flex-direction: column; gap: clamp(22px, 4vw, 40px); padding-bottom: clamp(20px, 3vw, 30px); border-bottom: 1px solid var(--line); }
+  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .brand { display: flex; align-items: center; gap: 12px; }
+  .hammer { width: 26px; height: 26px; flex: none; color: var(--brass); }
+  .kicker { font-family: var(--mono); font-size: .7rem; letter-spacing: .26em; text-transform: uppercase; color: var(--ink-dim); }
   .theme-btn {
     font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
     color: var(--ink-dim); background: transparent; border: 1px solid var(--line);
     padding: 8px 12px; border-radius: 2px; cursor: pointer; transition: color .2s, border-color .2s;
   }
   .theme-btn:hover { color: var(--ink); border-color: var(--brass); }
+
+  /* — nagłówek-bohater — */
+  .hero { display: flex; flex-direction: column; gap: clamp(10px, 1.6vw, 16px); align-items: flex-start; }
+  .title {
+    font-family: var(--serif); font-weight: 700;
+    font-size: clamp(2.6rem, 8.5vw, 5.6rem); line-height: .96; letter-spacing: .015em;
+    text-transform: uppercase; color: var(--ink); text-wrap: balance;
+  }
+  .subtitle {
+    font-family: var(--serif); font-size: clamp(1.2rem, 3vw, 2.05rem); line-height: 1.18;
+    color: var(--ink); text-wrap: balance; max-width: 26ch;
+  }
+  .subtitle b { color: var(--brass); font-weight: 700; }
+  /* pigułka „wkrótce” */
+  .soon {
+    display: inline-flex; align-items: center; gap: 9px; margin-top: 6px;
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .03em; text-transform: uppercase; line-height: 1.35;
+    color: var(--ink-dim); background: var(--brass-soft); border: 1px solid var(--brass);
+    padding: 8px 15px; border-radius: 999px;
+  }
+  .soon b { color: var(--brass); font-weight: 600; }
+  .soon-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--brass); flex: none; animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .25; } }
 
   /* — kolumny — */
   .cols { display: grid; grid-template-columns: 1.65fr 1fr; gap: clamp(20px, 3vw, 40px); align-items: start; }
@@ -271,6 +287,7 @@
     .ring.go { animation: none; }
     .strike { transition: none; }
     .strike:hover { transform: none; }
+    .soon-dot { animation: none; }
   }
 </style>
 
@@ -278,17 +295,21 @@
   <div class="wrap">
 
     <header class="masthead">
-      <div class="brand">
-        <svg class="hammer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-          <path d="M14.5 3.5l6 6-3 3-6-6z"/>
-          <path d="M11.5 6.5l-8 8a1.6 1.6 0 0 0 0 2.3l1.7 1.7a1.6 1.6 0 0 0 2.3 0l8-8"/>
-        </svg>
-        <div class="brand-txt">
-          <span class="wordmark">Młot na idole</span>
-          <span class="tagline">generator inwektyw · wedle Fryderyka Nietzschego</span>
+      <div class="topbar">
+        <div class="brand">
+          <svg class="hammer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14.5 3.5l6 6-3 3-6-6z"/>
+            <path d="M11.5 6.5l-8 8a1.6 1.6 0 0 0 0 2.3l1.7 1.7a1.6 1.6 0 0 0 2.3 0l8-8"/>
+          </svg>
+          <span class="kicker">Episteme AI</span>
         </div>
+        <button class="theme-btn" id="themeBtn" type="button" aria-label="Zmień motyw">motyw</button>
       </div>
-      <button class="theme-btn" id="themeBtn" type="button" aria-label="Zmień motyw">motyw</button>
+      <div class="hero">
+        <h1 class="title">Młot na idole</h1>
+        <p class="subtitle">Generator inwektyw wedle Fryderyka Nietzschego</p>
+        <div class="soon"><span class="soon-dot" aria-hidden="true"></span>Wkrótce: <b>Bździągwa</b> · generator inwektyw wedle Stanisława Ignacego Witkiewicza</div>
+      </div>
     </header>
 
     <div class="cols">
@@ -378,8 +399,8 @@
     </div>
 
     <footer class="foot">
-      <p>Korpus: 100 inwektyw Nietzschego (Zmierzch bożyszcz · Antychryst · Ecce homo · Poza dobrem i złem) rozłożonych na 8 krojów.</p>
-      <p id="footcount">— kombinacji</p>
+      <p>© 2026 <a href="https://www.episteme-ai.pl/" target="_blank" rel="noopener">Franciszek Kołpanowicz · Episteme AI</a>. Aplikacja i kod: wszelkie prawa zastrzeżone. Inwektywy oparte na twórczości Fryderyka Nietzschego (domena publiczna).</p>
+      <p>Korpus: 100 inwektyw · 8 krojów · <span id="footcount">kombinacji</span></p>
     </footer>
 
   </div>
@@ -465,19 +486,33 @@
     rozbudowany:"pełny wyrok", prosty:"prosty cios",
   };
 
+  // każdy szablon zwraca { t: tekst, n: rzeczownik-rdzeń }; n służy blokadzie powtórek
   const T = [
-    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ);return `${pick(INT)} ${adjFor(a,n.g)} ${n.w}`;}},
-    {id:"superlatyw",  w:14, g:()=>{const n=pick(REL),a=pick(ADJ);return `najbardziej ${adjFor(a,n.g)} ${n.w} ${pick(GEN)}`;}},
-    {id:"przyimkowy",  w:14, g:()=>{const n=pick(NOUN);return `${n.w} ${pick(PREP)}`;}},
-    {id:"podwojony",   w:16, g:()=>{const n=pick(NOUN);let a1=pick(ADJ),a2=pick(ADJ);while(a2===a1)a2=pick(ADJ);return `${adjFor(a1,n.g)}, ${adjFor(a2,n.g)} ${n.w}`;}},
-    {id:"lakoniczny",  w:6,  g:()=>pick(NOUN).w},
-    {id:"dopelniaczowy",w:12, g:()=>{const n=pick(REL);return `${n.w} ${pick(GEN)}`;}},
-    {id:"rozbudowany", w:10, g:()=>{const n=pick(NOUN),a=pick(ADJ);return `${adjFor(a,n.g)} ${n.w} ${pick(PREP)}`;}},
-    {id:"prosty",      w:6,  g:()=>{const n=pick(NOUN),a=pick(ADJ);return `${adjFor(a,n.g)} ${n.w}`;}},
+    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${pick(INT)} ${adjFor(a,n.g)} ${n.w}`, n:n.w};}},
+    {id:"superlatyw",  w:14, g:()=>{const n=pick(REL),a=pick(ADJ);return {t:`najbardziej ${adjFor(a,n.g)} ${n.w} ${pick(GEN)}`, n:n.w};}},
+    {id:"przyimkowy",  w:14, g:()=>{const n=pick(NOUN);return {t:`${n.w} ${pick(PREP)}`, n:n.w};}},
+    {id:"podwojony",   w:16, g:()=>{const n=pick(NOUN);let a1=pick(ADJ),a2=pick(ADJ);while(a2===a1)a2=pick(ADJ);return {t:`${adjFor(a1,n.g)}, ${adjFor(a2,n.g)} ${n.w}`, n:n.w};}},
+    {id:"lakoniczny",  w:6,  g:()=>{const n=pick(NOUN);return {t:n.w, n:n.w};}},
+    {id:"dopelniaczowy",w:12, g:()=>{const n=pick(REL);return {t:`${n.w} ${pick(GEN)}`, n:n.w};}},
+    {id:"rozbudowany", w:10, g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${adjFor(a,n.g)} ${n.w} ${pick(PREP)}`, n:n.w};}},
+    {id:"prosty",      w:6,  g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${adjFor(a,n.g)} ${n.w}`, n:n.w};}},
   ];
 
   function pickT(){ const tot=T.reduce((s,t)=>s+t.w,0); let r=Math.random()*tot; for(const t of T){ if((r-=t.w)<0) return t; } return T[0]; }
-  function generate(id){ const t=id?(T.find(x=>x.id===id)||pickT()):pickT(); return {text:cap(t.g()), template:t.id}; }
+
+  // Blokada anty-powtórkowa. Wszystkie kroje ciągną z 59 rzeczowników, więc bez tego
+  // ten sam rdzeń wraca co ~8 losowań (paradoks urodzin) mimo 249 tys. pełnych kombinacji.
+  const recentNouns = [], recentTexts = [];
+  const NOUN_MEMORY = 6, TEXT_MEMORY = 40, MAX_TRIES = 24;
+  function generate(id){
+    const t = id ? (T.find(x=>x.id===id) || pickT()) : pickT();
+    let out, text, tries = 0;
+    do { out = t.g(); text = cap(out.t); tries++; }
+    while (tries < MAX_TRIES && (recentNouns.includes(out.n) || recentTexts.includes(text)));
+    recentNouns.push(out.n); if (recentNouns.length > NOUN_MEMORY) recentNouns.shift();
+    recentTexts.push(text);  if (recentTexts.length > TEXT_MEMORY) recentTexts.shift();
+    return { text, template: t.id };
+  }
 
   function total(){
     const A=ADJ.length,N=NOUN.length,R=REL.length,G=GEN.length,I=INT.length,P=PREP.length;
@@ -490,30 +525,44 @@
         regEl=$("#register"), counterEl=$("#counter"), footEl=$("#footcount"),
         toastEl=$("#toast"), variantEl=$("#variant"),
         expTxtEl=$("#expTxt"), expHtmlEl=$("#expHtml");
-  let current = "Nieporozumienie";
-  const history = [];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  let current = "Nieporozumienie";
+  let history = [];            // [{text, tpl}]
+  let userTheme = "";
+  const STORE = "mlot.state.v1";
 
   const grand = total();
   counterEl.textContent = grand.toLocaleString("pl-PL");
   footEl.textContent = grand.toLocaleString("pl-PL") + " kombinacji";
 
-  function render(res){
-    current = res.text;
-    verdictEl.textContent = res.text;
-    cutEl.innerHTML = `krój: <b>${NAMES[res.template]}</b>`;
-    if(!reduce){
+  // — trwałość stanu (localStorage) —
+  function save(){ try { localStorage.setItem(STORE, JSON.stringify({ h: history, t: userTheme })); } catch(e){} }
+  function load(){ try { return JSON.parse(localStorage.getItem(STORE) || "null"); } catch(e){ return null; } }
+
+  function paintRegister(){
+    if (!history.length){ regEl.innerHTML = `<li class="empty">Jeszcze nie uderzyłeś.</li>`; expTxtEl.disabled = expHtmlEl.disabled = true; return; }
+    regEl.innerHTML = history.map((h,i)=>`<li tabindex="0"><span class="n">${String(i+1).padStart(2,"0")}</span><span>${esc(h.text)}</span></li>`).join("");
+    [...regEl.querySelectorAll("li")].forEach((li,i)=> li.addEventListener("click",()=>copy(history[i].text)));
+    expTxtEl.disabled = expHtmlEl.disabled = false;
+  }
+  function showVerdict(text, tpl, animate){
+    current = text;
+    verdictEl.textContent = text;
+    cutEl.innerHTML = tpl ? `krój: <b>${NAMES[tpl]}</b>` : `krój: <b>zapisany</b>`;
+    if (animate && !reduce){
       verdictEl.classList.remove("struck"); void verdictEl.offsetWidth; verdictEl.classList.add("struck");
       ringEl.classList.remove("go"); void ringEl.offsetWidth; ringEl.classList.add("go");
     }
-    history.unshift(res.text);
-    if(history.length>500) history.pop();
-    regEl.innerHTML = history.map((h,i)=>`<li tabindex="0"><span class="n">${String(i+1).padStart(2,"0")}</span><span>${esc(h)}</span></li>`).join("");
-    [...regEl.querySelectorAll("li")].forEach((li,i)=> li.addEventListener("click",()=>copy(history[i])));
-    const has = history.length > 0;
-    expTxtEl.disabled = !has; expHtmlEl.disabled = !has;
   }
-  function strike(){ render(generate(variantEl.value||undefined)); }
+  function strike(){
+    const res = generate(variantEl.value || undefined);
+    showVerdict(res.text, res.template, true);
+    history.unshift({ text: res.text, tpl: res.template });
+    if (history.length > 500) history.pop();
+    paintRegister();
+    save();
+  }
 
   let toastT;
   function toast(msg){ toastEl.textContent=msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove("show"),1600); }
@@ -529,16 +578,17 @@
     return `mlot-na-idole-wyroki-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.${ext}`; };
 
   function buildTxt(){
-    const rule = "—".repeat(46);
-    const body = history.map((h,i)=> `${String(i+1).padStart(2,"0")}.  ${h}`).join("\n");
-    return `MŁOT NA IDOLE — rejestr wyroków\nwedle Fryderyka Nietzschego\n\n`
+    const rule = "=".repeat(46);
+    const body = history.map((h,i)=> `${String(i+1).padStart(2,"0")}.  ${h.text}`).join("\n");
+    return `MŁOT NA IDOLE / rejestr wyroków\nwedle Fryderyka Nietzschego\n\n`
       + `Wykuto: ${stamp()}\nLiczba wyroków: ${history.length}\n${rule}\n\n${body}\n\n${rule}\n`
+      + `(c) ${new Date().getFullYear()} Franciszek Kołpanowicz · Episteme AI · www.episteme-ai.pl\n`
       + `szafran00.github.io/mlot-na-idole\n`;
   }
 
   function buildHtml(){
     const items = history.map((h,i)=>
-      `      <li><span class="n">${String(i+1).padStart(2,"0")}</span><span class="v">${esc(h)}</span></li>`).join("\n");
+      `      <li><span class="n">${String(i+1).padStart(2,"0")}</span><span class="v">${esc(h.text)}</span></li>`).join("\n");
     return `<!DOCTYPE html>
 <html lang="pl">
 <head>
@@ -574,7 +624,7 @@
     <ul>
 ${items}
     </ul>
-    <footer>Zebrano w kuźni &middot; <a href="https://szafran00.github.io/mlot-na-idole/">szafran00.github.io/mlot-na-idole</a></footer>
+    <footer>© ${new Date().getFullYear()} Franciszek Kołpanowicz &middot; <a href="https://www.episteme-ai.pl/">Episteme AI</a> &middot; <a href="https://szafran00.github.io/mlot-na-idole/">młot na idole</a></footer>
   </div>
 </body>
 </html>
@@ -601,16 +651,27 @@ ${items}
     if(e.code==="Space" || e.code==="Enter"){ e.preventDefault(); strike(); }
   });
 
-  // motyw
+  // motyw (zapamiętywany)
   const themeBtn=$("#themeBtn");
   themeBtn.addEventListener("click", ()=>{
     const cur = document.documentElement.getAttribute("data-theme")
       || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-    document.documentElement.setAttribute("data-theme", cur==="dark" ? "light" : "dark");
+    userTheme = cur==="dark" ? "light" : "dark";
+    document.documentElement.setAttribute("data-theme", userTheme);
+    save();
   });
 
-  // pierwsze uderzenie
-  strike();
+  // ————— START: przywróć zapisany stan albo wykuj pierwszy wyrok —————
+  const saved = load();
+  if (saved && saved.t){ userTheme = saved.t; document.documentElement.setAttribute("data-theme", userTheme); }
+  if (saved && Array.isArray(saved.h) && saved.h.length){
+    history = saved.h.filter(x => x && typeof x.text === "string").slice(0, 500);
+    recentTexts.push(...history.slice(0, TEXT_MEMORY).map(h => h.text));
+    paintRegister();
+    showVerdict(history[0].text, history[0].tpl, false);
+  } else {
+    strike();
+  }
 })();
 </script>
 </body>
