@@ -441,6 +441,15 @@
     ["nadęty","nadęta","nadęte"],["jałowy","jałowa","jałowe"],
     ["skarlały","skarlała","skarlałe"],["przaśny","przaśna","przaśne"],
     ["namaszczony","namaszczona","namaszczone"],["skwaśniały","skwaśniała","skwaśniałe"],
+    ["zjełczały","zjełczała","zjełczałe"],["parszywy","parszywa","parszywe"],
+    ["cuchnący","cuchnąca","cuchnące"],["nabożny","nabożna","nabożne"],
+    ["ślamazarny","ślamazarna","ślamazarne"],["przemądrzały","przemądrzała","przemądrzałe"],
+    ["zaślepiony","zaślepiona","zaślepione"],["pokraczny","pokraczna","pokraczne"],
+    ["rozlazły","rozlazła","rozlazłe"],["ckliwy","ckliwa","ckliwe"],
+    ["nadgniły","nadgniła","nadgniłe"],["marny","marna","marne"],
+    ["opasły","opasła","opasłe"],["cherlawy","cherlawa","cherlawe"],
+    ["zapluty","zapluta","zaplute"],["świętobliwy","świętobliwa","świętobliwe"],
+    ["przegniły","przegniła","przegniłe"],["obłąkany","obłąkana","obłąkane"],
   ];
   const NOUN = [
     {w:"chrześcijanin",g:"m"},{w:"dekadent",g:"m"},{w:"błazen",g:"m"},{w:"pajac",g:"m"},
@@ -459,6 +468,11 @@
     {w:"nieporozumienie",g:"n"},{w:"nieszczęście",g:"n"},{w:"bydlę",g:"n"},{w:"zero",g:"n"},
     {w:"widmo",g:"n"},{w:"monstrum",g:"n"},{w:"indywiduum",g:"n"},{w:"straszydło",g:"n"},
     {w:"próchno",g:"n"},{w:"truchło",g:"n"},
+    {w:"kabotyn",g:"m"},{w:"sekciarz",g:"m"},{w:"dewot",g:"m"},{w:"cynik",g:"m"},
+    {w:"hipokryta",g:"m"},{w:"kołtun",g:"m"},{w:"nudziarz",g:"m"},{w:"matoł",g:"m"},
+    {w:"cham",g:"m"},{w:"gbur",g:"m"},{w:"pismak",g:"m"},{w:"sługus",g:"m"},
+    {w:"kanalia",g:"f"},{w:"pokraka",g:"f"},{w:"nędznica",g:"f"},{w:"zakała",g:"f"},
+    {w:"beztalencie",g:"n"},{w:"widziadło",g:"n"},{w:"cielsko",g:"n"},{w:"ścierwo",g:"n"},
   ];
   const REL = [
     {w:"ofiara",g:"f"},{w:"karykatura",g:"f"},{w:"kwintesencja",g:"f"},{w:"produkt",g:"m"},
@@ -466,10 +480,15 @@
     {w:"pomnik",g:"m"},{w:"apostoł",g:"m"},{w:"adwokat",g:"m"},{w:"grabarz",g:"m"},
     {w:"morderca",g:"m"},{w:"pasożyt",g:"m"},{w:"kaznodzieja",g:"m"},{w:"niewolnik",g:"m"},
     {w:"błazen",g:"m"},{w:"wcielenie",g:"n"},{w:"pośmiewisko",g:"n"},
+    {w:"sługa",g:"m"},{w:"prorok",g:"m"},{w:"relikt",g:"m"},{w:"krzewiciel",g:"m"},
+    {w:"obrońca",g:"m"},{w:"wyznawca",g:"m"},{w:"wróg",g:"m"},{w:"epigon",g:"m"},
+    {w:"herold",g:"m"},{w:"parodia",g:"f"},{w:"kwiat",g:"m"},{w:"pomiot",g:"m"},
   ];
   const GEN = ["chrześcijaństwa","moralności","życia","ducha","instynktu","rozumu",
     "nowoczesności","dekadencji","resentymentu","zaświatów","postępu","cnoty","prawdy",
-    "sumienia","Boga","historii","oświecenia","litości","słabości","nudy"];
+    "sumienia","Boga","historii","oświecenia","litości","słabości","nudy",
+    "stada","tłumu","kościoła","postu","pokory","obowiązku","poświęcenia","wieczności",
+    "grzechu","zbawienia","ideału","mieszczaństwa","przesądu","wiary","askezy","melancholii"];
   const INT = ["ostatecznie","gruntownie","doszczętnie","nieuleczalnie","beznadziejnie",
     "niepoprawnie","z gruntu","do szpiku kości","na wskroś","typowo","rozpaczliwie",
     "żałośnie","bez reszty","notorycznie","w gruncie rzeczy","nieodwołalnie","nieznośnie",
@@ -482,7 +501,11 @@
   const PREP = ["w szlafroku","bez instynktu","bez krwi","bez wyjścia","na glinianych nogach",
     "w masce moralności","z katedry","w todze","w sutannie","bez płci","w kaftanie cnoty",
     "pod krzyżem","z Królewca","bez przyszłości","na łożu śmierci","z ambony",
-    "w oparach kadzidła","bez jednej kropli krwi"];
+    "w oparach kadzidła","bez jednej kropli krwi","w peruce","w binoklach","bez kręgosłupa",
+    "bez zębów","na klęczkach","w habicie","z różańcem","w gorsecie cnoty",
+    "na smyczy obowiązku","bez grama dumy","w cieniu krzyża","z podkulonym ogonem",
+    "w prochu","bez własnego zdania","w niedzielnym garniturze","bez odrobiny stylu",
+    "w mundurku","na łańcuchu dogmatu","bez śladu smaku"];
 
   const IDX = {m:0,f:1,n:2};
   const pick = a => a[(Math.random()*a.length)|0];
@@ -495,32 +518,47 @@
     rozbudowany:"pełny wyrok", prosty:"prosty cios",
   };
 
-  // każdy szablon zwraca { t: tekst, n: rzeczownik-rdzeń }; n służy blokadzie powtórek
+  // Każdy szablon zwraca { t: tekst, p: {typ: wartość} }.
+  // p = WSZYSTKIE użyte części (rzeczownik, przymiotnik(i), przysłówek, dopełniacz, ogon) —
+  // po to, by blokada anty-powtórkowa pilnowała każdej kategorii z osobna.
   const T = [
-    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ),iw=pick(INT);return {t:`${iw} ${adjFor(a,n.g)} ${n.w}`, n:n.w, i:iw};}},
-    {id:"superlatyw",  w:14, g:()=>{const n=pick(REL),a=pick(ADJ);return {t:`najbardziej ${adjFor(a,n.g)} ${n.w} ${pick(GEN)}`, n:n.w};}},
-    {id:"przyimkowy",  w:14, g:()=>{const n=pick(NOUN);return {t:`${n.w} ${pick(PREP)}`, n:n.w};}},
-    {id:"podwojony",   w:16, g:()=>{const n=pick(NOUN);let a1=pick(ADJ),a2=pick(ADJ);while(a2===a1)a2=pick(ADJ);return {t:`${adjFor(a1,n.g)}, ${adjFor(a2,n.g)} ${n.w}`, n:n.w};}},
-    {id:"lakoniczny",  w:6,  g:()=>{const n=pick(NOUN);return {t:n.w, n:n.w};}},
-    {id:"dopelniaczowy",w:12, g:()=>{const n=pick(REL);return {t:`${n.w} ${pick(GEN)}`, n:n.w};}},
-    {id:"rozbudowany", w:10, g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${adjFor(a,n.g)} ${n.w} ${pick(PREP)}`, n:n.w};}},
-    {id:"prosty",      w:6,  g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${adjFor(a,n.g)} ${n.w}`, n:n.w};}},
+    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ),iw=pick(INT);return {t:`${iw} ${adjFor(a,n.g)} ${n.w}`, p:{noun:n.w, adj:a[0], int:iw}};}},
+    {id:"superlatyw",  w:14, g:()=>{const n=pick(REL),a=pick(ADJ),gw=pick(GEN);return {t:`najbardziej ${adjFor(a,n.g)} ${n.w} ${gw}`, p:{noun:n.w, adj:a[0], gen:gw}};}},
+    {id:"przyimkowy",  w:14, g:()=>{const n=pick(NOUN),pw=pick(PREP);return {t:`${n.w} ${pw}`, p:{noun:n.w, prep:pw}};}},
+    {id:"podwojony",   w:16, g:()=>{const n=pick(NOUN);let a1=pick(ADJ),a2=pick(ADJ);while(a2===a1)a2=pick(ADJ);return {t:`${adjFor(a1,n.g)}, ${adjFor(a2,n.g)} ${n.w}`, p:{noun:n.w, adj:a1[0], adj2:a2[0]}};}},
+    {id:"lakoniczny",  w:6,  g:()=>{const n=pick(NOUN);return {t:n.w, p:{noun:n.w}};}},
+    {id:"dopelniaczowy",w:12, g:()=>{const n=pick(REL),gw=pick(GEN);return {t:`${n.w} ${gw}`, p:{noun:n.w, gen:gw}};}},
+    {id:"rozbudowany", w:10, g:()=>{const n=pick(NOUN),a=pick(ADJ),pw=pick(PREP);return {t:`${adjFor(a,n.g)} ${n.w} ${pw}`, p:{noun:n.w, adj:a[0], prep:pw}};}},
+    {id:"prosty",      w:6,  g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${adjFor(a,n.g)} ${n.w}`, p:{noun:n.w, adj:a[0]}};}},
   ];
 
   function pickT(){ const tot=T.reduce((s,t)=>s+t.w,0); let r=Math.random()*tot; for(const t of T){ if((r-=t.w)<0) return t; } return T[0]; }
 
-  // Blokada anty-powtórkowa. Wszystkie kroje ciągną z 59 rzeczowników, więc bez tego
-  // ten sam rdzeń wraca co ~8 losowań (paradoks urodzin) mimo 249 tys. pełnych kombinacji.
-  const recentNouns = [], recentTexts = [], recentInts = [];
-  const NOUN_MEMORY = 6, TEXT_MEMORY = 40, INT_MEMORY = 8, MAX_TRIES = 24;
+  // Uniwersalna blokada anty-powtórkowa. Każda kategoria ma własne okno pamięci; żadna
+  // część (rzeczownik, przymiotnik, przysłówek, dopełniacz, ogon przyimkowy) nie powtórzy
+  // się, dopóki nie wypadnie z okna. Bez tego małe pule (np. ogony) dawały "w sutannie"
+  // dwa razy pod rząd, mimo setek tysięcy pełnych kombinacji.
+  const MEM = { noun:7, adj:9, int:9, gen:7, prep:7 };   // rozmiar okna per kategoria
+  const recent = { noun:[], adj:[], int:[], gen:[], prep:[] };
+  const recentTexts = [];
+  const TEXT_MEMORY = 60, MAX_TRIES = 40;
+  const poolOf = k => k === "adj2" ? "adj" : k;           // oba przymiotniki -> jedna pula
+
+  function collides(p){
+    for (const k in p){ const pool = poolOf(k); if (recent[pool] && recent[pool].includes(p[k])) return true; }
+    return false;
+  }
+  function remember(text, p){
+    recentTexts.push(text); if (recentTexts.length > TEXT_MEMORY) recentTexts.shift();
+    for (const k in p){ const pool = poolOf(k); if (!recent[pool]) continue;
+      recent[pool].push(p[k]); if (recent[pool].length > MEM[pool]) recent[pool].shift(); }
+  }
   function generate(id){
     const t = id ? (T.find(x=>x.id===id) || pickT()) : pickT();
     let out, text, tries = 0;
     do { out = t.g(); text = cap(out.t); tries++; }
-    while (tries < MAX_TRIES && (recentNouns.includes(out.n) || recentTexts.includes(text) || (out.i && recentInts.includes(out.i))));
-    recentNouns.push(out.n); if (recentNouns.length > NOUN_MEMORY) recentNouns.shift();
-    recentTexts.push(text);  if (recentTexts.length > TEXT_MEMORY) recentTexts.shift();
-    if (out.i){ recentInts.push(out.i); if (recentInts.length > INT_MEMORY) recentInts.shift(); }
+    while (tries < MAX_TRIES && (recentTexts.includes(text) || collides(out.p)));
+    remember(text, out.p);
     return { text, template: t.id };
   }
 
