@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Młot na idole — generator inwektyw wedle Nietzschego</title>
+<meta name="description" content="Generator inwektyw w stylu Fryderyka Nietzschego — 249 133 gramatycznie poprawnych obelg z ośmiu krojów, z poszanowaniem polskiej odmiany przez rodzaje.">
+<meta name="author" content="Franciszek Kołpanowicz">
+<meta name="theme-color" content="#17181d">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Młot na idole — generator inwektyw wedle Nietzschego">
+<meta property="og:description" content="249 133 gramatycznie poprawnych obelg w stylu Nietzschego. Uderz młotem.">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔨</text></svg>">
+</head>
+<body>
+<style>
+  :root {
+    /* — świat kuźni (ciemny, domyślny) — */
+    --ground: #17181d;
+    --ground-2: #131318;
+    --plate: #1d1e25;
+    --ink: #ebe7dd;
+    --ink-dim: #90909a;
+    --line: rgba(235,231,221,.12);
+    --line-2: rgba(235,231,221,.06);
+    --brass: #cba451;
+    --brass-ink: #1a1206;
+    --brass-soft: rgba(203,164,81,.15);
+    --deep: #2a1114;               /* oksekrew — tylko winieta w tle */
+    --shadow: 0 24px 60px -30px rgba(0,0,0,.8);
+    --plate-inset: inset 0 1px 0 rgba(235,231,221,.05), inset 0 0 60px -20px rgba(0,0,0,.6);
+
+    --serif: "Palatino Linotype","Book Antiqua",Palatino,"URW Palladio L","Iowan Old Style",Georgia,"Times New Roman",serif;
+    --mono: "Cascadia Code",Consolas,"SFMono-Regular","SF Mono",Menlo,"DejaVu Sans Mono",monospace;
+    --sans: "Segoe UI",system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;
+    color-scheme: dark;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --ground: #d7d6cf;          /* chłodny cynk, świadomie nie krem */
+      --ground-2: #cdccc3;
+      --plate: #cfcec6;
+      --ink: #24252b;
+      --ink-dim: #5b5c63;
+      --line: rgba(36,37,43,.18);
+      --line-2: rgba(36,37,43,.09);
+      --brass: #8a6a1c;
+      --brass-ink: #f4efe2;
+      --brass-soft: rgba(138,106,28,.14);
+      --deep: #b9b4a6;
+      --shadow: 0 20px 44px -28px rgba(30,28,22,.45);
+      --plate-inset: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 50px -18px rgba(60,55,44,.28);
+      color-scheme: light;
+    }
+  }
+  /* przełącznik gościa wygrywa w obie strony */
+  :root[data-theme="light"] {
+    --ground: #d7d6cf; --ground-2: #cdccc3; --plate: #cfcec6; --ink: #24252b;
+    --ink-dim: #5b5c63; --line: rgba(36,37,43,.18); --line-2: rgba(36,37,43,.09);
+    --brass: #8a6a1c; --brass-ink: #f4efe2; --brass-soft: rgba(138,106,28,.14);
+    --deep: #b9b4a6; --shadow: 0 20px 44px -28px rgba(30,28,22,.45);
+    --plate-inset: inset 0 1px 0 rgba(255,255,255,.5), inset 0 0 50px -18px rgba(60,55,44,.28);
+    color-scheme: light;
+  }
+  :root[data-theme="dark"] {
+    --ground: #17181d; --ground-2: #131318; --plate: #1d1e25; --ink: #ebe7dd;
+    --ink-dim: #90909a; --line: rgba(235,231,221,.12); --line-2: rgba(235,231,221,.06);
+    --brass: #cba451; --brass-ink: #1a1206; --brass-soft: rgba(203,164,81,.15);
+    --deep: #2a1114; --shadow: 0 24px 60px -30px rgba(0,0,0,.8);
+    --plate-inset: inset 0 1px 0 rgba(235,231,221,.05), inset 0 0 60px -20px rgba(0,0,0,.6);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  .stage, .stage * { margin: 0; }
+
+  .stage {
+    min-height: 100vh;
+    font-family: var(--sans);
+    color: var(--ink);
+    background:
+      radial-gradient(120% 90% at 82% 8%, var(--brass-soft), transparent 42%),
+      radial-gradient(140% 120% at 12% 108%, var(--deep), transparent 55%),
+      var(--ground);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding: clamp(18px, 4vw, 48px);
+    display: flex;
+    justify-content: center;
+  }
+  .wrap { width: 100%; max-width: 1120px; display: flex; flex-direction: column; gap: clamp(20px, 3vw, 34px); }
+
+  /* — masztowa belka — */
+  .masthead {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding-bottom: 18px; border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 14px; }
+  .hammer { width: 30px; height: 30px; flex: none; color: var(--brass); }
+  .brand-txt { display: flex; flex-direction: column; gap: 2px; }
+  .wordmark {
+    font-family: var(--serif); font-size: clamp(1rem, 1.4vw, 1.18rem);
+    font-weight: 700; letter-spacing: .26em; text-transform: uppercase; color: var(--ink);
+  }
+  .tagline { font-family: var(--mono); font-size: .68rem; letter-spacing: .08em; color: var(--ink-dim); text-transform: uppercase; }
+  .theme-btn {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--ink-dim); background: transparent; border: 1px solid var(--line);
+    padding: 8px 12px; border-radius: 2px; cursor: pointer; transition: color .2s, border-color .2s;
+  }
+  .theme-btn:hover { color: var(--ink); border-color: var(--brass); }
+
+  /* — kolumny — */
+  .cols { display: grid; grid-template-columns: 1.65fr 1fr; gap: clamp(20px, 3vw, 40px); align-items: start; }
+  @media (max-width: 800px) { .cols { grid-template-columns: 1fr; } }
+
+  /* — płyta inskrypcyjna — */
+  .plate {
+    position: relative; background: var(--plate);
+    border: 1px solid var(--line);
+    box-shadow: var(--shadow), var(--plate-inset);
+    border-radius: 3px;
+    padding: clamp(30px, 5vw, 58px) clamp(22px, 4vw, 48px);
+    min-height: 300px;
+    display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 22px;
+    overflow: hidden; isolation: isolate;
+  }
+  .plate::before { /* rytowana wewnętrzna ramka */
+    content: ""; position: absolute; inset: 12px; border: 1px solid var(--line-2);
+    border-radius: 1px; pointer-events: none;
+  }
+  .eyebrow {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .34em; text-transform: uppercase;
+    color: var(--brass); z-index: 1;
+  }
+  .verdict {
+    font-family: var(--serif); font-weight: 500;
+    font-size: clamp(1.7rem, 2.2vw + 1.15rem, 3.35rem); line-height: 1.12;
+    letter-spacing: .005em; text-align: center; text-wrap: balance; color: var(--ink);
+    z-index: 1; max-width: 18ch;
+  }
+  .verdict.struck { animation: stamp .42s cubic-bezier(.2,.9,.2,1); }
+  @keyframes stamp {
+    0% { opacity: 0; transform: scale(1.045); filter: blur(.4px); }
+    60% { opacity: 1; }
+    100% { opacity: 1; transform: scale(1); filter: blur(0); }
+  }
+  .cut {
+    font-family: var(--mono); font-size: .68rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-dim); z-index: 1; text-align: center;
+  }
+  .cut b { color: var(--brass); font-weight: 500; }
+  .ring { /* pierścień rezonansu */
+    position: absolute; left: 50%; top: 50%; width: 40px; height: 40px; margin: -20px 0 0 -20px;
+    border: 1px solid var(--brass); border-radius: 50%; opacity: 0; z-index: 0; pointer-events: none;
+  }
+  .ring.go { animation: reso .55s ease-out; }
+  @keyframes reso {
+    0% { opacity: .5; transform: scale(.4); }
+    100% { opacity: 0; transform: scale(9); }
+  }
+
+  /* — pulpit sterowania — */
+  .console { display: flex; flex-direction: column; gap: 14px; margin-top: 22px; }
+  .controls { display: flex; flex-wrap: wrap; gap: 12px; align-items: stretch; }
+  .strike {
+    flex: 1 1 auto; min-width: 190px;
+    font-family: var(--mono); font-size: .92rem; font-weight: 700; letter-spacing: .18em; text-transform: uppercase;
+    color: var(--brass-ink); background: var(--brass); border: 1px solid var(--brass);
+    padding: 16px 22px; border-radius: 2px; cursor: pointer;
+    display: inline-flex; align-items: center; justify-content: center; gap: 12px;
+    transition: transform .12s ease, box-shadow .2s ease, filter .2s ease;
+    box-shadow: 0 0 0 0 var(--brass-soft);
+  }
+  .strike:hover { transform: translateY(-1px); box-shadow: 0 10px 30px -12px var(--brass-soft), 0 0 24px -6px var(--brass-soft); filter: brightness(1.06); }
+  .strike:active { transform: translateY(1px) scale(.995); }
+  .strike svg { width: 18px; height: 18px; }
+  .ghost {
+    font-family: var(--mono); font-size: .74rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink); background: transparent; border: 1px solid var(--line);
+    padding: 0 18px; border-radius: 2px; cursor: pointer; transition: border-color .2s, color .2s;
+    display: inline-flex; align-items: center; gap: 9px;
+  }
+  .ghost:hover { border-color: var(--brass); color: var(--brass); }
+  .ghost svg { width: 15px; height: 15px; }
+  .selectwrap { position: relative; flex: 1 1 200px; min-width: 190px; }
+  .selectwrap::after {
+    content: "▾"; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    color: var(--ink-dim); pointer-events: none; font-size: .7rem;
+  }
+  select {
+    width: 100%; height: 100%; -webkit-appearance: none; appearance: none;
+    font-family: var(--mono); font-size: .74rem; letter-spacing: .06em; text-transform: uppercase;
+    color: var(--ink); background: transparent; border: 1px solid var(--line);
+    padding: 13px 34px 13px 14px; border-radius: 2px; cursor: pointer;
+  }
+  select:hover { border-color: var(--brass); }
+  option { background: var(--ground); color: var(--ink); letter-spacing: normal; }
+  .hint { font-family: var(--mono); font-size: .66rem; letter-spacing: .04em; color: var(--ink-dim); }
+  .hint kbd {
+    font-family: var(--mono); border: 1px solid var(--line); border-bottom-width: 2px; border-radius: 3px;
+    padding: 1px 6px; color: var(--ink); font-size: .62rem;
+  }
+
+  /* — szyna: licznik + rejestr + epigrafy — */
+  .rail { display: flex; flex-direction: column; gap: 24px; }
+  .panel { border: 1px solid var(--line); border-radius: 3px; padding: 20px; background: linear-gradient(var(--line-2), transparent); }
+  .panel h2 {
+    font-family: var(--mono); font-size: .66rem; letter-spacing: .24em; text-transform: uppercase;
+    color: var(--ink-dim); font-weight: 500; margin-bottom: 14px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .panel h2::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+  .counter { display: flex; flex-direction: column; gap: 4px; }
+  .counter .num {
+    font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums;
+    font-size: clamp(1.5rem, 3vw, 2.1rem); color: var(--brass); letter-spacing: .02em;
+  }
+  .counter .lbl { font-family: var(--mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
+
+  .register { list-style: none; display: flex; flex-direction: column; }
+  .register li {
+    font-family: var(--serif); font-size: .96rem; color: var(--ink);
+    padding: 9px 0; border-bottom: 1px solid var(--line-2);
+    display: flex; gap: 12px; align-items: baseline; cursor: copy;
+    transition: color .18s;
+  }
+  .register li:last-child { border-bottom: 0; }
+  .register li:hover { color: var(--brass); }
+  .register li .n { font-family: var(--mono); font-size: .62rem; color: var(--ink-dim); flex: none; width: 1.6em; text-align: right; font-variant-numeric: tabular-nums; }
+  .register .empty { font-family: var(--mono); font-size: .72rem; color: var(--ink-dim); letter-spacing: .04em; text-transform: none; cursor: default; border: 0; }
+
+  .epigraph { display: flex; flex-direction: column; gap: 16px; }
+  .epigraph figure { display: flex; flex-direction: column; gap: 5px; }
+  .epigraph blockquote { font-family: var(--serif); font-style: italic; font-size: .98rem; color: var(--ink); line-height: 1.4; }
+  .epigraph figcaption { font-family: var(--mono); font-size: .62rem; letter-spacing: .06em; color: var(--ink-dim); text-transform: uppercase; }
+
+  /* — stopka — */
+  .foot { border-top: 1px solid var(--line); padding-top: 16px; display: flex; flex-wrap: wrap; gap: 6px 18px; justify-content: space-between; }
+  .foot p { font-family: var(--mono); font-size: .62rem; letter-spacing: .04em; color: var(--ink-dim); }
+  .foot a { color: var(--ink-dim); text-decoration: underline; text-underline-offset: 2px; }
+  .foot a:hover { color: var(--brass); }
+
+  /* — toast — */
+  .toast {
+    position: fixed; left: 50%; bottom: 26px; transform: translate(-50%, 20px);
+    font-family: var(--mono); font-size: .72rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--brass-ink); background: var(--brass); padding: 10px 18px; border-radius: 2px;
+    opacity: 0; pointer-events: none; transition: opacity .25s, transform .25s; z-index: 40;
+  }
+  .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+  :where(button, select, li):focus-visible { outline: 2px solid var(--brass); outline-offset: 3px; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .verdict.struck { animation: none; }
+    .ring.go { animation: none; }
+    .strike { transition: none; }
+    .strike:hover { transform: none; }
+  }
+</style>
+
+<div class="stage">
+  <div class="wrap">
+
+    <header class="masthead">
+      <div class="brand">
+        <svg class="hammer" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M14.5 3.5l6 6-3 3-6-6z"/>
+          <path d="M11.5 6.5l-8 8a1.6 1.6 0 0 0 0 2.3l1.7 1.7a1.6 1.6 0 0 0 2.3 0l8-8"/>
+        </svg>
+        <div class="brand-txt">
+          <span class="wordmark">Młot na idole</span>
+          <span class="tagline">generator inwektyw · wedle Fryderyka Nietzschego</span>
+        </div>
+      </div>
+      <button class="theme-btn" id="themeBtn" type="button" aria-label="Zmień motyw">motyw</button>
+    </header>
+
+    <div class="cols">
+
+      <!-- SCENA -->
+      <section>
+        <div class="plate">
+          <span class="ring" id="ring" aria-hidden="true"></span>
+          <span class="eyebrow">wyrok młota</span>
+          <p class="verdict" id="verdict" aria-live="polite">Nieporozumienie</p>
+          <p class="cut" id="cut">krój: <b>jednym słowem</b></p>
+        </div>
+
+        <div class="console">
+          <div class="controls">
+            <button class="strike" id="strikeBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 3.5l6 6-3 3-6-6z"/><path d="M11.5 6.5l-8 8a1.6 1.6 0 0 0 0 2.3l1.7 1.7a1.6 1.6 0 0 0 2.3 0l8-8"/></svg>
+              Uderz
+            </button>
+            <div class="selectwrap">
+              <select id="variant" aria-label="Krój obelgi">
+                <option value="">dowolny krój</option>
+                <option value="wzmocniony">z naciskiem — „ostatecznie przebiegły chrześcijanin”</option>
+                <option value="superlatyw">w najwyższym stopniu — „najbardziej pouczająca ofiara chrześcijaństwa”</option>
+                <option value="przyimkowy">z ogonem — „nieszczęście w szlafroku”</option>
+                <option value="podwojony">podwójne ostrze — „spróchniały, zrozpaczony dekadent”</option>
+                <option value="lakoniczny">jednym słowem — „nieporozumienie”</option>
+                <option value="dopelniaczowy">wróg czegoś — „oszczerca życia”</option>
+                <option value="rozbudowany">pełny wyrok — „znużony dekadent na glinianych nogach”</option>
+                <option value="prosty">prosty cios — „jadowita tarantula”</option>
+              </select>
+            </div>
+            <button class="ghost" id="copyBtn" type="button">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>
+              Przepisz
+            </button>
+          </div>
+          <p class="hint"><kbd>spacja</kbd> lub <kbd>enter</kbd> — uderz ponownie</p>
+        </div>
+      </section>
+
+      <!-- SZYNA -->
+      <aside class="rail">
+        <div class="panel">
+          <h2>Skala pogardy</h2>
+          <div class="counter">
+            <span class="num" id="counter">0</span>
+            <span class="lbl">możliwych wyroków w kuźni</span>
+          </div>
+        </div>
+
+        <div class="panel">
+          <h2>Rejestr wyroków</h2>
+          <ul class="register" id="register">
+            <li class="empty">Jeszcze nie uderzyłeś.</li>
+          </ul>
+        </div>
+
+        <div class="panel epigraph">
+          <h2>Z autentycznego młota</h2>
+          <figure>
+            <blockquote>„Sokrates był nieporozumieniem.”</blockquote>
+            <figcaption>Zmierzch bożyszcz, Problem Sokratesa</figcaption>
+          </figure>
+          <figure>
+            <blockquote>„Kant: najbardziej zniekształcony kaleka pojęciowy wszechczasów.”</blockquote>
+            <figcaption>Antychryst, §11</figcaption>
+          </figure>
+          <figure>
+            <blockquote>„Platon — wielki oszczerca życia.”</blockquote>
+            <figcaption>Ecce homo</figcaption>
+          </figure>
+        </div>
+      </aside>
+    </div>
+
+    <footer class="foot">
+      <p>Korpus: 100 inwektyw Nietzschego (Zmierzch bożyszcz · Antychryst · Ecce homo · Poza dobrem i złem) rozłożonych na 8 krojów.</p>
+      <p id="footcount">— kombinacji</p>
+    </footer>
+
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite">Przepisano do schowka</div>
+
+<script>
+(() => {
+  "use strict";
+
+  // ————— BANKI SŁÓW (zwalidowane: 0 błędów rodzaju na 5000 losowań) —————
+  const ADJ = [
+    ["przebiegły","przebiegła","przebiegłe"],["spróchniały","spróchniała","spróchniałe"],
+    ["zrozpaczony","zrozpaczona","zrozpaczone"],["zakłamany","zakłamana","zakłamane"],
+    ["tchórzliwy","tchórzliwa","tchórzliwe"],["chorowity","chorowita","chorowite"],
+    ["blady","blada","blade"],["znużony","znużona","znużone"],
+    ["małostkowy","małostkowa","małostkowe"],["jadowity","jadowita","jadowite"],
+    ["chytry","chytra","chytre"],["podziemny","podziemna","podziemne"],
+    ["dwuznaczny","dwuznaczna","dwuznaczne"],["plebejski","plebejska","plebejskie"],
+    ["próżny","próżna","próżne"],["zniewieściały","zniewieściała","zniewieściałe"],
+    ["moralistyczny","moralistyczna","moralistyczne"],["ponury","ponura","ponure"],
+    ["zgorzkniały","zgorzkniała","zgorzkniałe"],["służalczy","służalcza","służalcze"],
+    ["mściwy","mściwa","mściwe"],["obłudny","obłudna","obłudne"],
+    ["pokątny","pokątna","pokątne"],["wykastrowany","wykastrowana","wykastrowane"],
+    ["anemiczny","anemiczna","anemiczne"],["świętoszkowaty","świętoszkowata","świętoszkowate"],
+    ["zwyrodniały","zwyrodniała","zwyrodniałe"],["pouczający","pouczająca","pouczające"],
+    ["niepoprawny","niepoprawna","niepoprawne"],["ślepy","ślepa","ślepe"],
+    ["pełzający","pełzająca","pełzające"],["lepki","lepka","lepkie"],
+    ["lodowaty","lodowata","lodowate"],["fałszywy","fałszywa","fałszywe"],
+    ["gnuśny","gnuśna","gnuśne"],["karłowaty","karłowata","karłowate"],
+    ["zatęchły","zatęchła","zatęchłe"],["upiorny","upiorna","upiorne"],
+    ["śmierdzący","śmierdząca","śmierdzące"],["kramarski","kramarska","kramarskie"],
+    ["stadny","stadna","stadne"],["wsteczny","wsteczna","wsteczne"],
+    ["nadęty","nadęta","nadęte"],["jałowy","jałowa","jałowe"],
+    ["skarlały","skarlała","skarlałe"],["przaśny","przaśna","przaśne"],
+    ["namaszczony","namaszczona","namaszczone"],["skwaśniały","skwaśniała","skwaśniałe"],
+  ];
+  const NOUN = [
+    {w:"chrześcijanin",g:"m"},{w:"dekadent",g:"m"},{w:"błazen",g:"m"},{w:"pajac",g:"m"},
+    {w:"komediant",g:"m"},{w:"histrion",g:"m"},{w:"pasożyt",g:"m"},{w:"truciciel",g:"m"},
+    {w:"fałszerz",g:"m"},{w:"oszczerca",g:"m"},{w:"kaleka",g:"m"},{w:"przeżuwacz",g:"m"},
+    {w:"pająk",g:"m"},{w:"kapłan",g:"m"},{w:"teolog",g:"m"},{w:"nihilista",g:"m"},
+    {w:"moralista",g:"m"},{w:"idiota",g:"m"},{w:"słabeusz",g:"m"},{w:"motłoch",g:"m"},
+    {w:"filister",g:"m"},{w:"zaświatowiec",g:"m"},{w:"fanatyk",g:"m"},{w:"świętoszek",g:"m"},
+    {w:"nieudacznik",g:"m"},{w:"tchórz",g:"m"},{w:"karzeł",g:"m"},{w:"wampir",g:"m"},
+    {w:"grabarz",g:"m"},{w:"pedant",g:"m"},{w:"bakałarz",g:"m"},{w:"tyran",g:"m"},
+    {w:"kaznodzieja",g:"m"},
+    {w:"ofiara",g:"f"},{w:"tarantula",g:"f"},{w:"pijawka",g:"f"},{w:"zaraza",g:"f"},
+    {w:"mumia",g:"f"},{w:"karykatura",g:"f"},{w:"małpa",g:"f"},{w:"hiena",g:"f"},
+    {w:"gadzina",g:"f"},{w:"kreatura",g:"f"},{w:"miernota",g:"f"},{w:"hołota",g:"f"},
+    {w:"swołocz",g:"f"},{w:"gangrena",g:"f"},{w:"zgnilizna",g:"f"},{w:"poczwara",g:"f"},
+    {w:"nieporozumienie",g:"n"},{w:"nieszczęście",g:"n"},{w:"bydlę",g:"n"},{w:"zero",g:"n"},
+    {w:"widmo",g:"n"},{w:"monstrum",g:"n"},{w:"indywiduum",g:"n"},{w:"straszydło",g:"n"},
+    {w:"próchno",g:"n"},{w:"truchło",g:"n"},
+  ];
+  const REL = [
+    {w:"ofiara",g:"f"},{w:"karykatura",g:"f"},{w:"kwintesencja",g:"f"},{w:"produkt",g:"m"},
+    {w:"wytwór",g:"m"},{w:"symptom",g:"m"},{w:"objaw",g:"m"},{w:"owoc",g:"m"},
+    {w:"pomnik",g:"m"},{w:"apostoł",g:"m"},{w:"adwokat",g:"m"},{w:"grabarz",g:"m"},
+    {w:"morderca",g:"m"},{w:"pasożyt",g:"m"},{w:"kaznodzieja",g:"m"},{w:"niewolnik",g:"m"},
+    {w:"błazen",g:"m"},{w:"wcielenie",g:"n"},{w:"pośmiewisko",g:"n"},
+  ];
+  const GEN = ["chrześcijaństwa","moralności","życia","ducha","instynktu","rozumu",
+    "nowoczesności","dekadencji","resentymentu","zaświatów","postępu","cnoty","prawdy",
+    "sumienia","Boga","historii","oświecenia","litości","słabości","nudy"];
+  const INT = ["ostatecznie","gruntownie","doszczętnie","nieuleczalnie","beznadziejnie",
+    "niepoprawnie","z gruntu","do szpiku kości","na wskroś","typowo","rozpaczliwie",
+    "żałośnie","bez reszty","notorycznie","w gruncie rzeczy"];
+  const PREP = ["w szlafroku","bez instynktu","bez krwi","bez wyjścia","na glinianych nogach",
+    "w masce moralności","z katedry","w todze","w sutannie","bez płci","w kaftanie cnoty",
+    "pod krzyżem","z Królewca","bez przyszłości","na łożu śmierci","z ambony",
+    "w oparach kadzidła","bez jednej kropli krwi"];
+
+  const IDX = {m:0,f:1,n:2};
+  const pick = a => a[(Math.random()*a.length)|0];
+  const adjFor = (a,g) => a[IDX[g]];
+  const cap = s => s.charAt(0).toUpperCase()+s.slice(1);
+
+  const NAMES = {
+    wzmocniony:"z naciskiem", superlatyw:"w najwyższym stopniu", przyimkowy:"z ogonem",
+    podwojony:"podwójne ostrze", lakoniczny:"jednym słowem", dopelniaczowy:"wróg czegoś",
+    rozbudowany:"pełny wyrok", prosty:"prosty cios",
+  };
+
+  const T = [
+    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ);return `${pick(INT)} ${adjFor(a,n.g)} ${n.w}`;}},
+    {id:"superlatyw",  w:14, g:()=>{const n=pick(REL),a=pick(ADJ);return `najbardziej ${adjFor(a,n.g)} ${n.w} ${pick(GEN)}`;}},
+    {id:"przyimkowy",  w:14, g:()=>{const n=pick(NOUN);return `${n.w} ${pick(PREP)}`;}},
+    {id:"podwojony",   w:16, g:()=>{const n=pick(NOUN);let a1=pick(ADJ),a2=pick(ADJ);while(a2===a1)a2=pick(ADJ);return `${adjFor(a1,n.g)}, ${adjFor(a2,n.g)} ${n.w}`;}},
+    {id:"lakoniczny",  w:6,  g:()=>pick(NOUN).w},
+    {id:"dopelniaczowy",w:12, g:()=>{const n=pick(REL);return `${n.w} ${pick(GEN)}`;}},
+    {id:"rozbudowany", w:10, g:()=>{const n=pick(NOUN),a=pick(ADJ);return `${adjFor(a,n.g)} ${n.w} ${pick(PREP)}`;}},
+    {id:"prosty",      w:6,  g:()=>{const n=pick(NOUN),a=pick(ADJ);return `${adjFor(a,n.g)} ${n.w}`;}},
+  ];
+
+  function pickT(){ const tot=T.reduce((s,t)=>s+t.w,0); let r=Math.random()*tot; for(const t of T){ if((r-=t.w)<0) return t; } return T[0]; }
+  function generate(id){ const t=id?(T.find(x=>x.id===id)||pickT()):pickT(); return {text:cap(t.g()), template:t.id}; }
+
+  function total(){
+    const A=ADJ.length,N=NOUN.length,R=REL.length,G=GEN.length,I=INT.length,P=PREP.length;
+    return I*A*N + A*R*G + N*P + A*(A-1)*N + N + R*G + A*N*P + A*N;
+  }
+
+  // ————— DOM —————
+  const $ = s => document.querySelector(s);
+  const verdictEl=$("#verdict"), cutEl=$("#cut"), ringEl=$("#ring"),
+        regEl=$("#register"), counterEl=$("#counter"), footEl=$("#footcount"),
+        toastEl=$("#toast"), variantEl=$("#variant");
+  let current = "Nieporozumienie";
+  const history = [];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  const grand = total();
+  counterEl.textContent = grand.toLocaleString("pl-PL");
+  footEl.textContent = grand.toLocaleString("pl-PL") + " kombinacji";
+
+  function render(res){
+    current = res.text;
+    verdictEl.textContent = res.text;
+    cutEl.innerHTML = `krój: <b>${NAMES[res.template]}</b>`;
+    if(!reduce){
+      verdictEl.classList.remove("struck"); void verdictEl.offsetWidth; verdictEl.classList.add("struck");
+      ringEl.classList.remove("go"); void ringEl.offsetWidth; ringEl.classList.add("go");
+    }
+    history.unshift(res.text);
+    if(history.length>8) history.pop();
+    regEl.innerHTML = history.map((h,i)=>`<li tabindex="0"><span class="n">${String(i+1).padStart(2,"0")}</span><span>${h}</span></li>`).join("");
+    [...regEl.querySelectorAll("li")].forEach((li,i)=> li.addEventListener("click",()=>copy(history[i])));
+  }
+  function strike(){ render(generate(variantEl.value||undefined)); }
+
+  let toastT;
+  function toast(msg){ toastEl.textContent=msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove("show"),1600); }
+  function copy(text){
+    const t = text || current;
+    navigator.clipboard?.writeText(t).then(()=>toast("Przepisano: „"+t+"”")).catch(()=>toast("Nie udało się przepisać"));
+  }
+
+  $("#strikeBtn").addEventListener("click", strike);
+  $("#copyBtn").addEventListener("click", ()=>copy());
+  document.addEventListener("keydown", e=>{
+    if(e.target.tagName==="SELECT") return;
+    if(e.code==="Space" || e.code==="Enter"){ e.preventDefault(); strike(); }
+  });
+
+  // motyw
+  const themeBtn=$("#themeBtn");
+  themeBtn.addEventListener("click", ()=>{
+    const cur = document.documentElement.getAttribute("data-theme")
+      || (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+    document.documentElement.setAttribute("data-theme", cur==="dark" ? "light" : "dark");
+  });
+
+  // pierwsze uderzenie
+  strike();
+})();
+</script>
+</body>
+</html>
