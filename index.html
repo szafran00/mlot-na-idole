@@ -469,7 +469,13 @@
     "sumienia","Boga","historii","oświecenia","litości","słabości","nudy"];
   const INT = ["ostatecznie","gruntownie","doszczętnie","nieuleczalnie","beznadziejnie",
     "niepoprawnie","z gruntu","do szpiku kości","na wskroś","typowo","rozpaczliwie",
-    "żałośnie","bez reszty","notorycznie","w gruncie rzeczy"];
+    "żałośnie","bez reszty","notorycznie","w gruncie rzeczy","nieodwołalnie","nieznośnie",
+    "przeraźliwie","dogłębnie","chronicznie","patologicznie","śmiertelnie","całkowicie",
+    "zupełnie","kompletnie","skrajnie","krańcowo","monotonnie","programowo","nałogowo",
+    "wiecznie","bezwstydnie","bezgranicznie","nieodmiennie","systematycznie","metodycznie",
+    "jawnie","podle","nikczemnie","haniebnie","obrzydliwie","nieodparcie","instynktownie",
+    "organicznie","z natury","z zasady","bez wyjątku","w każdym calu","co do joty",
+    "od stóp do głów","ponad wszelką miarę","nie do zniesienia","od urodzenia","dziedzicznie"];
   const PREP = ["w szlafroku","bez instynktu","bez krwi","bez wyjścia","na glinianych nogach",
     "w masce moralności","z katedry","w todze","w sutannie","bez płci","w kaftanie cnoty",
     "pod krzyżem","z Królewca","bez przyszłości","na łożu śmierci","z ambony",
@@ -488,7 +494,7 @@
 
   // każdy szablon zwraca { t: tekst, n: rzeczownik-rdzeń }; n służy blokadzie powtórek
   const T = [
-    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ);return {t:`${pick(INT)} ${adjFor(a,n.g)} ${n.w}`, n:n.w};}},
+    {id:"wzmocniony",  w:22, g:()=>{const n=pick(NOUN),a=pick(ADJ),iw=pick(INT);return {t:`${iw} ${adjFor(a,n.g)} ${n.w}`, n:n.w, i:iw};}},
     {id:"superlatyw",  w:14, g:()=>{const n=pick(REL),a=pick(ADJ);return {t:`najbardziej ${adjFor(a,n.g)} ${n.w} ${pick(GEN)}`, n:n.w};}},
     {id:"przyimkowy",  w:14, g:()=>{const n=pick(NOUN);return {t:`${n.w} ${pick(PREP)}`, n:n.w};}},
     {id:"podwojony",   w:16, g:()=>{const n=pick(NOUN);let a1=pick(ADJ),a2=pick(ADJ);while(a2===a1)a2=pick(ADJ);return {t:`${adjFor(a1,n.g)}, ${adjFor(a2,n.g)} ${n.w}`, n:n.w};}},
@@ -502,15 +508,16 @@
 
   // Blokada anty-powtórkowa. Wszystkie kroje ciągną z 59 rzeczowników, więc bez tego
   // ten sam rdzeń wraca co ~8 losowań (paradoks urodzin) mimo 249 tys. pełnych kombinacji.
-  const recentNouns = [], recentTexts = [];
-  const NOUN_MEMORY = 6, TEXT_MEMORY = 40, MAX_TRIES = 24;
+  const recentNouns = [], recentTexts = [], recentInts = [];
+  const NOUN_MEMORY = 6, TEXT_MEMORY = 40, INT_MEMORY = 8, MAX_TRIES = 24;
   function generate(id){
     const t = id ? (T.find(x=>x.id===id) || pickT()) : pickT();
     let out, text, tries = 0;
     do { out = t.g(); text = cap(out.t); tries++; }
-    while (tries < MAX_TRIES && (recentNouns.includes(out.n) || recentTexts.includes(text)));
+    while (tries < MAX_TRIES && (recentNouns.includes(out.n) || recentTexts.includes(text) || (out.i && recentInts.includes(out.i))));
     recentNouns.push(out.n); if (recentNouns.length > NOUN_MEMORY) recentNouns.shift();
     recentTexts.push(text);  if (recentTexts.length > TEXT_MEMORY) recentTexts.shift();
+    if (out.i){ recentInts.push(out.i); if (recentInts.length > INT_MEMORY) recentInts.shift(); }
     return { text, template: t.id };
   }
 
