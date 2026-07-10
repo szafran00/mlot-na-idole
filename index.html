@@ -112,9 +112,12 @@
   }
   .subtitle {
     font-family: var(--serif); font-size: clamp(1.2rem, 3vw, 2.05rem); line-height: 1.18;
-    color: var(--ink); text-wrap: balance; max-width: 26ch;
+    color: var(--ink); display: flex; align-items: center; gap: 18px; flex-wrap: wrap;
   }
+  .subtitle-txt { white-space: nowrap; }          /* podtytuł w jednym wierszu */
   .subtitle b { color: var(--brass); font-weight: 700; }
+  .mustache { height: 1.35em; width: auto; color: var(--ink); flex: none; display: block; }
+  @media (max-width: 620px){ .subtitle-txt { white-space: normal; } }
   /* pigułka „wkrótce” */
   .soon {
     display: inline-flex; align-items: center; gap: 9px; margin-top: 6px;
@@ -307,7 +310,7 @@
       </div>
       <div class="hero">
         <h1 class="title">Młot na idole</h1>
-        <p class="subtitle">Generator inwektyw wedle Fryderyka Nietzschego</p>
+        <p class="subtitle"><span class="subtitle-txt">Generator inwektyw wedle Fryderyka Nietzschego</span><svg class="mustache" viewBox="0 0 120 30" fill="currentColor" role="img" aria-label="wąsy Nietzschego"><path d="M60 15 C54 10 48 9 43 13 C36 18 29 20 22 18 C17 16.5 14 13 13 9 C12 5 7 5 6 10 C4 17 9 24 17 24 C25 24 33 21 41 17 C47 14 53 14 58 17 C59.5 18 59.5 19 60 21 C60.5 19 60.5 18 62 17 C67 14 73 14 79 17 C87 21 95 24 103 24 C111 24 116 17 114 10 C113 5 108 5 107 9 C106 13 103 16.5 98 18 C91 20 84 18 77 13 C72 9 66 10 60 15 Z"/></svg></p>
         <div class="soon"><span class="soon-dot" aria-hidden="true"></span>Wkrótce: <b>Bździągwa</b> · generator inwektyw wedle Stanisława Ignacego Witkiewicza</div>
       </div>
     </header>
