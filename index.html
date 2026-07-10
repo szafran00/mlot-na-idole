@@ -211,6 +211,20 @@
     display: flex; align-items: center; gap: 10px;
   }
   .panel h2::after { content: ""; height: 1px; flex: 1; background: var(--line); }
+  /* — nagłówek panelu z eksportem — */
+  .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
+  .panel-head h2 { margin: 0; }
+  .panel-head h2::after { display: none; }
+  .exports { display: flex; gap: 8px; flex: none; }
+  .chip {
+    font-family: var(--mono); font-size: .58rem; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-dim); background: transparent; border: 1px solid var(--line);
+    padding: 6px 9px; border-radius: 2px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;
+    transition: color .18s, border-color .18s;
+  }
+  .chip:hover:not(:disabled) { color: var(--brass); border-color: var(--brass); }
+  .chip:disabled { opacity: .35; cursor: not-allowed; }
+  .chip svg { width: 12px; height: 12px; }
   .counter { display: flex; flex-direction: column; gap: 4px; }
   .counter .num {
     font-family: var(--mono); font-weight: 700; font-variant-numeric: tabular-nums;
@@ -218,7 +232,7 @@
   }
   .counter .lbl { font-family: var(--mono); font-size: .64rem; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-dim); }
 
-  .register { list-style: none; display: flex; flex-direction: column; }
+  .register { list-style: none; display: flex; flex-direction: column; max-height: 340px; overflow-y: auto; overscroll-behavior: contain; }
   .register li {
     font-family: var(--serif); font-size: .96rem; color: var(--ink);
     padding: 9px 0; border-bottom: 1px solid var(--line-2);
@@ -227,7 +241,7 @@
   }
   .register li:last-child { border-bottom: 0; }
   .register li:hover { color: var(--brass); }
-  .register li .n { font-family: var(--mono); font-size: .62rem; color: var(--ink-dim); flex: none; width: 1.6em; text-align: right; font-variant-numeric: tabular-nums; }
+  .register li .n { font-family: var(--mono); font-size: .62rem; color: var(--ink-dim); flex: none; width: 2.2em; text-align: right; font-variant-numeric: tabular-nums; }
   .register .empty { font-family: var(--mono); font-size: .72rem; color: var(--ink-dim); letter-spacing: .04em; text-transform: none; cursor: default; border: 0; }
 
   .epigraph { display: flex; flex-direction: column; gap: 16px; }
@@ -309,7 +323,7 @@
             </div>
             <button class="ghost" id="copyBtn" type="button">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="1.5"/><path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"/></svg>
-              Przepisz
+              Kopiuj
             </button>
           </div>
           <p class="hint"><kbd>spacja</kbd> lub <kbd>enter</kbd> — uderz ponownie</p>
@@ -327,7 +341,19 @@
         </div>
 
         <div class="panel">
-          <h2>Rejestr wyroków</h2>
+          <div class="panel-head">
+            <h2>Rejestr wyroków</h2>
+            <div class="exports">
+              <button class="chip" id="expTxt" type="button" disabled title="Pobierz wszystkie wyroki jako plik tekstowy .txt">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 21h16"/></svg>
+                txt
+              </button>
+              <button class="chip" id="expHtml" type="button" disabled title="Pobierz wszystkie wyroki jako stylizowaną stronę .html">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 11l5 5 5-5"/><path d="M4 21h16"/></svg>
+                html
+              </button>
+            </div>
+          </div>
           <ul class="register" id="register">
             <li class="empty">Jeszcze nie uderzyłeś.</li>
           </ul>
@@ -359,7 +385,7 @@
   </div>
 </div>
 
-<div class="toast" id="toast" role="status" aria-live="polite">Przepisano do schowka</div>
+<div class="toast" id="toast" role="status" aria-live="polite">Skopiowano do schowka</div>
 
 <script>
 (() => {
@@ -462,7 +488,8 @@
   const $ = s => document.querySelector(s);
   const verdictEl=$("#verdict"), cutEl=$("#cut"), ringEl=$("#ring"),
         regEl=$("#register"), counterEl=$("#counter"), footEl=$("#footcount"),
-        toastEl=$("#toast"), variantEl=$("#variant");
+        toastEl=$("#toast"), variantEl=$("#variant"),
+        expTxtEl=$("#expTxt"), expHtmlEl=$("#expHtml");
   let current = "Nieporozumienie";
   const history = [];
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -480,9 +507,11 @@
       ringEl.classList.remove("go"); void ringEl.offsetWidth; ringEl.classList.add("go");
     }
     history.unshift(res.text);
-    if(history.length>8) history.pop();
-    regEl.innerHTML = history.map((h,i)=>`<li tabindex="0"><span class="n">${String(i+1).padStart(2,"0")}</span><span>${h}</span></li>`).join("");
+    if(history.length>500) history.pop();
+    regEl.innerHTML = history.map((h,i)=>`<li tabindex="0"><span class="n">${String(i+1).padStart(2,"0")}</span><span>${esc(h)}</span></li>`).join("");
     [...regEl.querySelectorAll("li")].forEach((li,i)=> li.addEventListener("click",()=>copy(history[i])));
+    const has = history.length > 0;
+    expTxtEl.disabled = !has; expHtmlEl.disabled = !has;
   }
   function strike(){ render(generate(variantEl.value||undefined)); }
 
@@ -490,11 +519,83 @@
   function toast(msg){ toastEl.textContent=msg; toastEl.classList.add("show"); clearTimeout(toastT); toastT=setTimeout(()=>toastEl.classList.remove("show"),1600); }
   function copy(text){
     const t = text || current;
-    navigator.clipboard?.writeText(t).then(()=>toast("Przepisano: „"+t+"”")).catch(()=>toast("Nie udało się przepisać"));
+    navigator.clipboard?.writeText(t).then(()=>toast("Skopiowano: „"+t+"”")).catch(()=>toast("Nie udało się skopiować"));
   }
+
+  // ————— EKSPORT REJESTRU —————
+  const esc = s => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  const stamp = () => new Date().toLocaleString("pl-PL", { dateStyle: "long", timeStyle: "short" });
+  const fname = ext => { const d=new Date(), p=n=>String(n).padStart(2,"0");
+    return `mlot-na-idole-wyroki-${d.getFullYear()}${p(d.getMonth()+1)}${p(d.getDate())}.${ext}`; };
+
+  function buildTxt(){
+    const rule = "—".repeat(46);
+    const body = history.map((h,i)=> `${String(i+1).padStart(2,"0")}.  ${h}`).join("\n");
+    return `MŁOT NA IDOLE — rejestr wyroków\nwedle Fryderyka Nietzschego\n\n`
+      + `Wykuto: ${stamp()}\nLiczba wyroków: ${history.length}\n${rule}\n\n${body}\n\n${rule}\n`
+      + `szafran00.github.io/mlot-na-idole\n`;
+  }
+
+  function buildHtml(){
+    const items = history.map((h,i)=>
+      `      <li><span class="n">${String(i+1).padStart(2,"0")}</span><span class="v">${esc(h)}</span></li>`).join("\n");
+    return `<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Rejestr wyroków — Młot na idole</title>
+<style>
+  :root{ --bg:#17181d; --ink:#ebe7dd; --dim:#90909a; --brass:#cba451; --line:rgba(235,231,221,.1); }
+  @media (prefers-color-scheme: light){ :root{ --bg:#d7d6cf; --ink:#24252b; --dim:#5b5c63; --brass:#8a6a1c; --line:rgba(36,37,43,.16); } }
+  *{ box-sizing:border-box; margin:0; }
+  body{ background:radial-gradient(120% 90% at 82% 6%, rgba(203,164,81,.13), transparent 42%), var(--bg);
+    color:var(--ink); font-family:"Palatino Linotype","Book Antiqua",Palatino,Georgia,serif; line-height:1.5;
+    padding:clamp(26px,6vw,72px); min-height:100vh; -webkit-font-smoothing:antialiased; }
+  .sheet{ max-width:720px; margin:0 auto; }
+  .eyebrow{ font-family:"Cascadia Code",Consolas,monospace; font-size:.68rem; letter-spacing:.34em; text-transform:uppercase; color:var(--brass); }
+  h1{ font-size:clamp(2rem,5vw,3rem); font-weight:700; letter-spacing:.03em; margin:.35em 0 .15em; }
+  .meta{ font-family:"Cascadia Code",Consolas,monospace; font-size:.7rem; letter-spacing:.05em; text-transform:uppercase; color:var(--dim); }
+  hr{ border:0; border-top:1px solid var(--line); margin:26px 0; }
+  ul{ list-style:none; padding:0; display:flex; flex-direction:column; }
+  li{ display:flex; gap:18px; align-items:baseline; padding:12px 2px; border-bottom:1px solid var(--line); }
+  li .n{ font-family:"Cascadia Code",Consolas,monospace; font-size:.66rem; color:var(--dim); min-width:2.6em; text-align:right; }
+  li .v{ font-size:1.3rem; }
+  footer{ font-family:"Cascadia Code",Consolas,monospace; font-size:.64rem; letter-spacing:.05em; text-transform:uppercase; color:var(--dim); margin-top:26px; }
+  footer a{ color:var(--brass); text-decoration:none; }
+</style>
+</head>
+<body>
+  <div class="sheet">
+    <p class="eyebrow">Młot na idole</p>
+    <h1>Rejestr wyroków</h1>
+    <p class="meta">wedle Fryderyka Nietzschego &middot; wykuto ${stamp()} &middot; ${history.length} wyroków</p>
+    <hr>
+    <ul>
+${items}
+    </ul>
+    <footer>Zebrano w kuźni &middot; <a href="https://szafran00.github.io/mlot-na-idole/">szafran00.github.io/mlot-na-idole</a></footer>
+  </div>
+</body>
+</html>
+`;
+  }
+
+  function download(filename, content, mime){
+    const blob = new Blob([content], { type: mime + ";charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  }
+  function exportTxt(){ if(!history.length) return; download(fname("txt"), buildTxt(), "text/plain"); toast(`Zapisano ${history.length} wyroków (.txt)`); }
+  function exportHtml(){ if(!history.length) return; download(fname("html"), buildHtml(), "text/html"); toast(`Zapisano ${history.length} wyroków (.html)`); }
 
   $("#strikeBtn").addEventListener("click", strike);
   $("#copyBtn").addEventListener("click", ()=>copy());
+  expTxtEl.addEventListener("click", exportTxt);
+  expHtmlEl.addEventListener("click", exportHtml);
   document.addEventListener("keydown", e=>{
     if(e.target.tagName==="SELECT") return;
     if(e.code==="Space" || e.code==="Enter"){ e.preventDefault(); strike(); }
